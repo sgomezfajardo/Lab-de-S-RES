@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probando Servicios REST</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        pre {
+            background-color: #f8f8f8;
+            padding: 10px;
+            border: 1px solid #ddd;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Probando Servicios REST</h1>
+    
+    <h2>Obtener Todas las Personas (JSON)</h2>
+    <button id="fetchPersonsButton">Ver Personas</button>
+    <h3>Respuesta:</h3>
+    <pre id="personResponse"></pre>
+    
+    <h2>Agregar Persona</h2>
+    <form id="addPersonForm">
+        <label for="fullName">Nombre Completo:</label>
+        <input type="text" id="fullName" required>
+        <br>
+        <label for="age">Edad:</label>
+        <input type="number" id="age" required>
+        <br>
+        <button type="submit">Agregar Persona</button>
+    </form>
+    <h3>Respuesta:</h3>
+    <pre id="addResponse"></pre>
+
+    <script>
+        // Función para obtener todas las personas
+        document.getElementById('fetchPersonsButton').onclick = function() {
+            fetch('http://localhost:8080/testws_20242/services/getAllPersonsInJson')
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('personResponse').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('personResponse').textContent = 'Error: ' + error.message;
+                });
+        };
+
+        // Función para agregar una nueva persona
+        document.getElementById('addPersonForm').onsubmit = function(event) {
+            event.preventDefault(); // Evitar el envío del formulario
+            const fullName = document.getElementById('fullName').value;
+            const age = document.getElementById('age').value;
+
+            const personData = {
+                fullName: fullName,
+                age: parseInt(age)
+            };
+
+            fetch('http://localhost:8080/testws_20242/services/addPersonInJson', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(personData),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('addResponse').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('addPersonForm').reset(); // Reiniciar el formulario
+            })
+            .catch(error => {
+                document.getElementById('addResponse').textContent = 'Error: ' + error.message;
+            });
+        };
+    </script>
+</body>
+</html>
