@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package com.mycompany.testws_20242.services;
 
 import com.mycompany.testws_20242.entidad.Person;
@@ -15,42 +20,42 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("services")  // Ruta base para el servicio
+/**
+ *
+ * @author barr2
+ */
+@Path("services")
 public class Service {
 
-    private static Map<Integer, Person> personas = new HashMap<>();
+    private static Map<Integer, Person> personas = new HashMap();
 
-    // Inicializa algunas personas de prueba
     static {
         for (int i = 0; i < 10; i++) {
             Person persona = new Person();
             int id = i + 1;
             persona.setId(id);
-            persona.setFullName("Apreciado Amigo " + id);
-            int age = new Random().nextInt(40) + 1;  // Edad aleatoria entre 1 y 40
+            persona.setFullName("Apreciado Amigo  " + id);
+            int age = new Random().nextInt(40) + 1;
             persona.setAge(age);
-            persona.setSalario(age);  // Asigna el salario igual a la edad
+            persona.setSalario(age);
             personas.put(id, persona);
         }
     }
 
-    // Método para obtener todas las personas en formato JSON
     @GET
-    @Path("/getAllPersonsInJson")  // Ruta para este método
-    @Produces(MediaType.APPLICATION_JSON)  // Tipo de respuesta
+    @Path("/getAllPersonsInJson")
+    @Produces(MediaType.APPLICATION_JSON)
     public List<Person> getAllPersonsInJson() {
-        return new ArrayList<>(personas.values());
+        return new ArrayList<Person>(personas.values());
     }
 
-    // Método para obtener todas las personas en formato XML
     @GET
     @Path("/getAllPersonsInXML")
     @Produces(MediaType.APPLICATION_XML)
     public List<Person> getAllPersonsInXML() {
-        return new ArrayList<>(personas.values());
+        return new ArrayList<Person>(personas.values());
     }
 
-    // Método para obtener una persona por ID en formato JSON
     @GET
     @Path("/getPersonByIdJson/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -58,18 +63,16 @@ public class Service {
         return personas.get(id);
     }
 
-    // Método para agregar una persona en formato JSON
     @POST
     @Path("/addPersonInJson")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Person addPersonInJson(Person person) {
-        person.setSalario(person.getAge());  // Establece el salario basado en la edad
-        personas.put(person.getId(), person);
+        person.setSalario(person.getAge());
+        personas.put(new Integer(person.getId()), person);
         return person;
     }
 
-    // Método para calcular el salario promedio en formato XML
     @GET
     @Path("/getAverageSalaryInXML")
     @Produces(MediaType.APPLICATION_XML)
@@ -79,11 +82,11 @@ public class Service {
             avg += person.getSalario();
         }
         avg /= personas.size();
-        System.out.println("Promedio de salario: " + avg);
-        return new SalaryResponse(avg);  // Retorna el objeto envolvente
+        System.out.println("avg: " + avg);
+
+        return new SalaryResponse(avg);  // Retornamos el objeto envolvente
     }
 
-    // Método para calcular la suma de salarios en formato JSON
     @GET
     @Path("/getSumSalaryInJson")
     @Produces(MediaType.APPLICATION_JSON)
@@ -95,4 +98,5 @@ public class Service {
         System.out.println("Total salario: " + total);
         return total;
     }
+
 }
